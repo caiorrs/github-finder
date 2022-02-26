@@ -17,18 +17,23 @@ export const GithubProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING" });
   };
 
-  const fetchUsers = async () => {
+  const searchUsers = async (text) => {
     setLoading();
-    const response = await fetch(`${API_URL}/users`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
-    const data = await response.json();
+    const params = new URLSearchParams({
+      q: text,
+    });
+    const response = await fetch(`${API_URL}/search/users?${params}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
+    const { items } = await response.json();
+
+    console.log({ items });
 
     dispatch({
       type: "GET_USERS",
-      payload: data,
+      payload: items,
     });
   };
 
-  return <GithubContext.Provider value={{ users: state.users, loading: state.loading, fetchUsers }}>{children}</GithubContext.Provider>;
+  return <GithubContext.Provider value={{ users: state.users, loading: state.loading, searchUsers }}>{children}</GithubContext.Provider>;
 };
 
 export default GithubContext;
