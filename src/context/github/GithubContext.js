@@ -8,6 +8,7 @@ const GithubContext = createContext();
 export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
+    user: {},
     loading: false,
   };
 
@@ -27,17 +28,39 @@ export const GithubProvider = ({ children }) => {
       q: text,
     });
     const response = await fetch(`${API_URL}/search/users?${params}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
-    const { items } = await response.json();
 
-    console.log({ items });
+    if (response.status === 404) {
+      window.location = "/notfound";
+      dispatch({
+        type: "GET_USERS",
+        payload: null,
+      });
+    } else {
+      const { items } = await response.json();
+
+      dispatch({
+        type: "GET_USERS",
+        payload: items,
+      });
+    }
+  };
+
+  const getUser = async (login) => {
+    setLoading();
+    const response = await fetch(`${API_URL}/users/${login}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
+    const data = await response.json();
 
     dispatch({
-      type: "GET_USERS",
-      payload: items,
+      type: "GET_USER",
+      payload: data,
     });
   };
 
-  return <GithubContext.Provider value={{ users: state.users, loading: state.loading, searchUsers, clearUsers }}>{children}</GithubContext.Provider>;
+  return (
+    <GithubContext.Provider value={{ users: state.users, user: state.user, loading: state.loading, searchUsers, clearUsers, getUser }}>
+      {children}
+    </GithubContext.Provider>
+  );
 };
 
 export default GithubContext;
