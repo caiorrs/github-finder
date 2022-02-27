@@ -23,29 +23,6 @@ export const GithubProvider = ({ children }) => {
     dispatch({ type: "CLEAR_USERS" });
   };
 
-  const searchUsers = async (text) => {
-    setLoading();
-    const params = new URLSearchParams({
-      q: text,
-    });
-    const response = await fetch(`${API_URL}/search/users?${params}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
-
-    if (response.status === 404) {
-      window.location = "/notfound";
-      dispatch({
-        type: "GET_USERS",
-        payload: null,
-      });
-    } else {
-      const { items } = await response.json();
-
-      dispatch({
-        type: "GET_USERS",
-        payload: items,
-      });
-    }
-  };
-
   const getUser = async (login) => {
     setLoading();
     const response = await fetch(`${API_URL}/users/${login}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
@@ -74,7 +51,13 @@ export const GithubProvider = ({ children }) => {
 
   return (
     <GithubContext.Provider
-      value={{ users: state.users, user: state.user, loading: state.loading, repos: state.repos, searchUsers, clearUsers, getUser, getUserRepos }}
+      value={{
+        ...state,
+        dispatch,
+        clearUsers,
+        getUser,
+        getUserRepos,
+      }}
     >
       {children}
     </GithubContext.Provider>
