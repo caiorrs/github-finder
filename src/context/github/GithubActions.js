@@ -15,3 +15,19 @@ export const searchUsers = async (text) => {
     return items;
   }
 };
+
+export const getUser = async (login) => {
+  const response = await fetch(`${API_URL}/users/${login}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
+  const data = await response.json();
+  return data;
+};
+
+export const getUserRepos = async (login) => {
+  const param = new URLSearchParams({
+    sort: "created",
+    per_page: 10,
+  });
+  const response = await fetch(`${API_URL}/users/${login}/repos?${param}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
+  const data = await response.json();
+  return data;
+};

@@ -5,17 +5,13 @@ import GithubContext from "../../context/github/GithubContext";
 import { searchUsers } from "../../context/github/GithubActions";
 
 const UserSearch = () => {
-  const { users, clearUsers, dispatch } = useContext(GithubContext);
+  const { users, dispatch } = useContext(GithubContext);
   const { setAlert } = useContext(AlertContext);
 
   const [text, setText] = useState("");
 
   const handleChange = (e) => {
     setText(e.target.value);
-  };
-
-  const handleClear = () => {
-    clearUsers();
   };
 
   const handleSubmit = async (e) => {
@@ -53,7 +49,7 @@ const UserSearch = () => {
       </div>
       {users.length ? (
         <div>
-          <button className="btn btn-ghost btn-large" onClick={handleClear}>
+          <button className="btn btn-ghost btn-large" onClick={() => dispatch({ type: "CLEAR_USERS" })}>
             Clear
           </button>
         </div>
