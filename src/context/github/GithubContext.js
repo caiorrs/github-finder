@@ -1,4 +1,3 @@
-import { API_TOKEN, API_URL } from "../../environment";
 import { createContext, useReducer } from "react";
 
 import githubReducer from "./GithubReducer";
